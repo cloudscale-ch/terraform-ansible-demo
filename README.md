@@ -65,13 +65,18 @@ Download the terraform binary for your platform form https://www.terraform.io/do
     # Call the API with curl
     curl -H "$AUTH_HEADER" https://api.cloudscale.ch/v1/floating-ips
 
-You can now access your HA webserver at http://<floating_ip>/.
+You can now access your HA webserver at http://<floating_ip>/. You can
+now shut down the currently active webserver and see how the floating
+IP automatically switches over to the other webserver.
 
-    # Connect to your server keepalived01
+    # Display your infrastructure with terraform to get the server IPs
+    ./terraform show
+    
+    # Connect to the currently active webserver
     ssh debian@<your-server-ip>
-
+    
     # Turn the server off
-    poweroff
+    sudo poweroff
 
 If you now access your HA webserver again using the same floating IP
 you will see that it switched over to server keepalived00.
