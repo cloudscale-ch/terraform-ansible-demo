@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+# API token (with write permission) to access the cloudscale.ch API.
+api_token='{{ lookup("env", "CLOUDSCALE_API_TOKEN") }}'
+
+# Set of Floating IPs shared between the servers within the same VRRP group.
+floating_ipv4='{{ floating_ip_4.ip }}'
+floating_ipv6='{{ floating_ip_6.ip }}'
+
+# UUID of the server that this script is running on.
+# The UUID of the server can be retrieved using the API.
+server_uuid='{{ cloudscale.uuid }}'
+
+# Call the cloudscale.ch API to assign a specific Floating IP to this server.
+set_master() {
+    curl \
+        -f \
+        -H "Authorization: Bearer $api_token" \
+        -F server="$server_uuid" \
+        "https://api.cloudscale.ch/v1/floating-ips/$1"
+}
+
+# Assign the Floating IPs to this server.
+# Use linear back-off when unable to access API temporarily.
+ipv4_set=0
+ipv6_set=0
+i=1
+while [ "$ipv4_set" -lt 1 -o "$ipv6_set" -lt 1 ] ; do
+    if [ "$ipv4_set" -lt 1 ] ; then
+        set_master $floating_ipv4 && ipv4_set=1
+    fi
+    if [ "$ipv6_set" -lt 1 ] ; then
+        set_master $floating_ipv6 && ipv6_set=1
+    fi
+    sleep $i
+    i=$(expr $i + 1)
+done

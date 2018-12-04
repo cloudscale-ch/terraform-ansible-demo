@@ -1,0 +1,35 @@
+{% set peer_hostname = "keepalived00" if ansible_hostname == "keepalived01" else "keepalived01" %}
+# Define a shell command to check whether the service is running or not.
+vrrp_script service_check {
+    script "/bin/systemctl is-active nginx"
+    interval 2
+}
+
+# Define a group of servers sharing a set of Floating IPs.
+vrrp_instance floating_ip {
+    # VID of the VRRP group.
+    virtual_router_id 23
+
+    # Interface and local IP address used by this VRRP instance.
+    interface eth0
+    native_ipv4
+    unicast_src_ip  {{ ansible_eth0.ipv4.address }}
+
+    # Peer IP address of each server in the same VRRP group.
+    unicast_peer {
+        {{ hostvars[peer_hostname].ansible_eth0.ipv4.address }}
+    }
+
+    # Service check script used by this VRRP instance.
+    track_script {
+        service_check
+    }
+
+    # Script to assign the Floating IPs to this server when becoming master.
+    notify_master "/etc/keepalived/master.sh"
+
+    # VRRP priority of this server.
+    # The server with the highest priority will become master. Use a different
+    # priority for each server within the same VRRP group.
+    priority '{{ (ansible_play_hosts.index(inventory_hostname)+1) * 100 }}'
+}

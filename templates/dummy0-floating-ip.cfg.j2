@@ -1,0 +1,11 @@
+# Automatically bring the interface up on boot.
+auto dummy0
+
+iface dummy0 inet static
+    # The Floating IPv4 address to configure on this interface.
+    address {{ floating_ip_4.ip }}/32
+    pre-up modprobe dummy
+
+iface dummy0 inet6 static
+    # The Floating IPv6 address to configure on this interface.
+    address {{ floating_ip_6.ip }}/128

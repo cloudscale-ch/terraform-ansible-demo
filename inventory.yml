@@ -1,0 +1,3 @@
+plugin: cloudscale
+ansible_host: public_v4
+inventory_hostname: name
