@@ -76,7 +76,7 @@ You can now access your highly available web server at http://<floating_ip>/. On
     sudo poweroff
 
 If you now access your highly available web server again using the same Floating IP
-you will see that it switched over to the server keepalived00.
+you will see that it switched over to the other server.
     
 ### Tear down everything
 
