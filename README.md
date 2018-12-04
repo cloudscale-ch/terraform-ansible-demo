@@ -9,7 +9,7 @@ This demo will show you how to use the [cloudscale.ch Terraform Provider](https:
 
 ## Run the demo
 
-### Checkout the demo code
+### Download the demo code
 
     git clone https://github.com/cloudscale-ch/terraform-ansible-demo.git
     cd terraform-ansible-demo
@@ -39,7 +39,7 @@ Download the Terraform binary for your platform at https://www.terraform.io/down
     # Configure your SSH key in terraform.tfvars
     vi terraform.tfvars
     
-    # Initialize terraform
+    # Initialize Terraform
     ./terraform init
     
     # Launch your cloud servers
